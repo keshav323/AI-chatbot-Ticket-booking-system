@@ -8,12 +8,12 @@ on:
 
 jobs:
   build:
-    name: Build & Test
+    name: Build & Verify (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
+        node-version: [20.x, 22.x]
 
     steps:
     - name: Checkout repository
@@ -23,21 +23,17 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        cache-dependency-path: |
-          client/package.json
-          server/package.json
 
-    - name: Install Client Dependencies & Build
+    - name: Build Frontend (Vite)
       run: |
         cd client
-        npm ci || npm install
+        npm install
         npm run build
 
-    - name: Install Server Dependencies & Verify
+    - name: Verify Backend (Express)
       run: |
         cd server
-        npm ci || npm install
+        npm install
         node -c server.js
         node -c database.js
         node -c ai.js
