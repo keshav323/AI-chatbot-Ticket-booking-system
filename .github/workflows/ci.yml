@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: |
+          client/package.json
+          server/package.json
+
+    - name: Install Client Dependencies & Build
+      run: |
+        cd client
+        npm ci || npm install
+        npm run build
+
+    - name: Install Server Dependencies & Verify
+      run: |
+        cd server
+        npm ci || npm install
+        node -c server.js
+        node -c database.js
+        node -c ai.js
+        node -c routes.js
