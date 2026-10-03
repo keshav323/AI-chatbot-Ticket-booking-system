@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "description": "Interactive Frontend for AI Chatbot Museum Ticket Booking System",
+  "author": "keshav323",
   "type": "module",
   "scripts": {
     "dev": "vite",
